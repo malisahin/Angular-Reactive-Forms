@@ -3,21 +3,34 @@
     <div class="panel-heading"><h3 class="panel-title">Create Employee</h3></div>
 
     <div class="panel-body">
-      <div class="col-sm-12 form-group">
+      <div class="col-sm-12 form-group" [ngClass]="{ 'has-error': formErrors.fullName }">
         <label class="col-sm-2 control-label" for="fullName">Full Name</label>
-        <div class="col-sm-8"><input formControlName="fullName" id="fullName" type="text" class="form-control" /></div>
+        <div class="col-sm-8">
+          <input formControlName="fullName" id="fullName" type="text" class="form-control" />
+          <span class="help-block">
+            <span *ngIf="formErrors.fullName"> {{ formErrors.fullName }} </span>
+          </span>
+        </div>
       </div>
 
-      <div class="col-sm-12 form-group">
+      <div class="col-sm-12 form-group" [ngClass]="{ 'has-error': formErrors.email }">
         <label class="col-sm-2 control-label" for="email">Email</label>
-        <div class="col-sm-8"><input id="email" formControlName="email" type="text" class="form-control" /></div>
+        <div class="col-sm-8">
+          <input id="email" formControlName="email" type="text" class="form-control" />
+          <span class="help-block">
+            <span *ngIf="formErrors.email"> {{ formErrors.email }} </span>
+          </span>
+        </div>
       </div>
 
       <div formGroupName="skills">
-        <div class="form-group">
+        <div class="form-group" [ngClass]="{ 'has-error': formErrors.skillName }">
           <label class="col-sm-2 control-label" for="skillName">Skill</label>
           <div class="col-sm-4">
             <input type="text" class="form-control" id="skillName" placeholder="Name" formControlName="skillName" />
+            <span class="help-block">
+              <span>{{ formErrors.skillName }}</span>
+            </span>
           </div>
           <div class="col-sm-4">
             <input
@@ -26,10 +39,13 @@
               placeholder="Experince in Years"
               formControlName="experienceInYears"
             />
+            <span class="help-block">
+              <span>{{ formErrors.experienceInYears }}</span>
+            </span>
           </div>
         </div>
 
-        <div class="col-sm-12 form-group">
+        <div class="col-sm-12 form-group" [ngClass]="{ 'has-error': formErrors.proficiency }">
           <label class="col-md-2 control-label">Profiency</label>
           <div class="col-md-8">
             <label class="radio-inline">
@@ -41,12 +57,20 @@
             <label class="radio-inline">
               <input id="profiency" type="radio" value="advanced" formControlName="profiency" />Advanced
             </label>
+            <span class="help-block">
+              <span>{{ formErrors.profiency }}</span>
+            </span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="panel-footer"><button class="btn btn-primary" type="submit">Save</button></div>
+    <div class="panel-footer">
+      <div class="btn-toolbar">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-primary" (click)="onLoadDataClick()" type="button">Load Data</button>
+      </div>
+    </div>
   </div>
 
   <table border="1">
