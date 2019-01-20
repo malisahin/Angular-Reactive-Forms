@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { validateConfig } from '@angular/router/src/config';
 
 @Component({
@@ -19,6 +19,10 @@ export class CreateEmployeeComponent implements OnInit {
     },
     email: {
       required: 'Email is required',
+      emailDomain: 'Email Domain should be test.com',
+    },
+    phone: {
+      required: 'Phone is required',
     },
     skillName: {
       required: 'SkillName is required',
@@ -34,6 +38,7 @@ export class CreateEmployeeComponent implements OnInit {
   formErrors = {
     fullName: '',
     email: '',
+    phone: '',
     skillName: '',
     experienceInYears: '',
     profiency: '',
@@ -43,7 +48,9 @@ export class CreateEmployeeComponent implements OnInit {
   ngOnInit() {
     this.employeeForm = this.formBuilder.group({
       fullName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(10)]],
-      email: ['', Validators.required],
+      contactPreference: ['email', [Validators.required]],
+      email: ['', [Validators.required, emailDomain]],
+      phone: ['', []],
       skills: this.formBuilder.group({
         skillName: ['', [Validators.required]],
         experienceInYears: ['', [Validators.required]],
@@ -55,6 +62,8 @@ export class CreateEmployeeComponent implements OnInit {
       this.logValidationErrors(this.employeeForm);
       console.log(value);
       this.fullNameLength = value.length;
+
+      this.onContactPreferenceChange(value);
     });
   }
 
@@ -81,11 +90,24 @@ export class CreateEmployeeComponent implements OnInit {
     });
   }
 
+  onContactPreferenceChange(preference: string) {
+    debugger;
+    const phoneControl = this.employeeForm.get('phone');
+
+    if (preference === 'phone') {
+      phoneControl.setValidators(Validators.required);
+    } else {
+      phoneControl.clearValidators();
+    }
+    phoneControl.updateValueAndValidity();
+  }
+
   onSubmit() {
     console.log(this.employeeForm);
-    this.employeeForm.setValue({
+    this.employeeForm.patchValue({
       fullName: 'Sahin tech',
       email: 'mali@sahin.com',
+      phone: '',
       skills: {
         skillName: 'Java',
         experienceInYears: 5,
@@ -98,4 +120,14 @@ export class CreateEmployeeComponent implements OnInit {
     this.logValidationErrors(this.employeeForm);
     console.log(this.employeeForm.errors);
   }
+}
+
+function emailDomain(control: AbstractControl): { [key: string]: any } {
+  const email: string = control.value;
+
+  const domain = email.substring(email.lastIndexOf('@') + 1);
+  if (domain.toLowerCase() === 'test.com') {
+    return null;
+  }
+  return { emailDomain: true };
 }

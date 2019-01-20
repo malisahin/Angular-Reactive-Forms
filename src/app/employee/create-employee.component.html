@@ -13,6 +13,18 @@
         </div>
       </div>
 
+      <div class="col-sm-12 form-group">
+        <label class="col-sm-2 control-label">Contact Preference</label>
+        <div class="col-sm-8">
+          <label class="radio-inline">
+            <input id="contactPreference" type="radio" value="email" formControlName="contactPreference" />Email
+          </label>
+          <label class="radio-inline">
+            <input id="contactPreference" type="radio" value="phone" formControlName="contactPreference" />Phone
+          </label>
+        </div>
+      </div>
+
       <div class="col-sm-12 form-group" [ngClass]="{ 'has-error': formErrors.email }">
         <label class="col-sm-2 control-label" for="email">Email</label>
         <div class="col-sm-8">
@@ -23,8 +35,18 @@
         </div>
       </div>
 
+      <div class="col-sm-12 form-group" [ngClass]="{ 'has-error': formErrors.email }">
+        <label class="col-sm-2 control-label" for="phone">Phone</label>
+        <div class="col-sm-8">
+          <input id="phone" formControlName="phone" type="text" class="form-control" />
+          <span class="help-block">
+            <span *ngIf="formErrors.email"> {{ formErrors.phone }} </span>
+          </span>
+        </div>
+      </div>
+
       <div formGroupName="skills">
-        <div class="form-group" [ngClass]="{ 'has-error': formErrors.skillName }">
+        <div class="col-sm-12 form-group" [ngClass]="{ 'has-error': formErrors.skillName }">
           <label class="col-sm-2 control-label" for="skillName">Skill</label>
           <div class="col-sm-4">
             <input type="text" class="form-control" id="skillName" placeholder="Name" formControlName="skillName" />
@@ -46,8 +68,8 @@
         </div>
 
         <div class="col-sm-12 form-group" [ngClass]="{ 'has-error': formErrors.proficiency }">
-          <label class="col-md-2 control-label">Profiency</label>
-          <div class="col-md-8">
+          <label class="col-sm-2 control-label">Profiency</label>
+          <div class="col-sm-8">
             <label class="radio-inline">
               <input id="profiency" type="radio" value="beginner" formControlName="profiency" />Beginner
             </label>
