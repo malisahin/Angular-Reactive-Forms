@@ -21,6 +21,12 @@ export class CreateEmployeeComponent implements OnInit {
       required: 'Email is required',
       emailDomain: 'Email Domain should be test.com',
     },
+    confirm: {
+      required: 'Confirm email is required',
+    },
+    emailGroup: {
+      matchEmail: 'Emails should be match',
+    },
     phone: {
       required: 'Phone is required',
     },
@@ -38,6 +44,8 @@ export class CreateEmployeeComponent implements OnInit {
   formErrors = {
     fullName: '',
     email: '',
+    confirm: '',
+    emailGroup: '',
     phone: '',
     skillName: '',
     experienceInYears: '',
@@ -49,7 +57,13 @@ export class CreateEmployeeComponent implements OnInit {
     this.employeeForm = this.formBuilder.group({
       fullName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(10)]],
       contactPreference: ['email', [Validators.required]],
-      email: ['', [Validators.required, emailDomain]],
+      emailGroup: this.formBuilder.group(
+        {
+          email: ['', [Validators.required, emailDomain]],
+          confirm: ['', [Validators.required]],
+        },
+        { validator: matchEmail },
+      ),
       phone: ['', []],
       skills: this.formBuilder.group({
         skillName: ['', [Validators.required]],
@@ -58,12 +72,14 @@ export class CreateEmployeeComponent implements OnInit {
       }),
     });
 
+    this.employeeForm.get('contactPreference').valueChanges.subscribe((data: string) => {
+      this.onContactPreferenceChange(data);
+    });
+
     this.employeeForm.valueChanges.subscribe((value: string) => {
       this.logValidationErrors(this.employeeForm);
       console.log(value);
       this.fullNameLength = value.length;
-
-      this.onContactPreferenceChange(value);
     });
   }
 
@@ -76,7 +92,7 @@ export class CreateEmployeeComponent implements OnInit {
       } else {
         console.log(`Key: ${key} value: ${abstractControl.value}`);
 
-        if (abstractControl && !abstractControl.valid) {
+        if (abstractControl && !abstractControl.valid && (abstractControl.touched || abstractControl.dirty)) {
           const messages = this.validationMessages[key];
 
           this.formErrors[key] = '';
@@ -106,7 +122,9 @@ export class CreateEmployeeComponent implements OnInit {
     console.log(this.employeeForm);
     this.employeeForm.patchValue({
       fullName: 'Sahin tech',
-      email: 'mali@sahin.com',
+      emailGroup: {
+        email: 'mali@sahin.com',
+      },
       phone: '',
       skills: {
         skillName: 'Java',
@@ -124,10 +142,30 @@ export class CreateEmployeeComponent implements OnInit {
 
 function emailDomain(control: AbstractControl): { [key: string]: any } {
   const email: string = control.value;
-
   const domain = email.substring(email.lastIndexOf('@') + 1);
+
   if (domain.toLowerCase() === 'test.com') {
     return null;
   }
   return { emailDomain: true };
+}
+
+function emailDomainWithDomainParam(domain: string) {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const email: string = control.value;
+    const currentDomain = email.substring(email.lastIndexOf('@') + 1);
+
+    if (currentDomain.toLowerCase() === domain) {
+      return null;
+    }
+
+    return { emailDomain: true };
+  };
+}
+
+function matchEmail(group: AbstractControl): { [key: string]: any } | null {
+  const email = group.get('email');
+  const confirm = group.get('confirm');
+
+  return email.value === confirm.value ? null : { emailMisMatch: true };
 }
